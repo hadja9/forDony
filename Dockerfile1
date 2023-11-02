@@ -1,0 +1,30 @@
+# Une image de base compatible 
+FROM php:8.2-fpm
+
+# Les prérequis
+RUN apt-get update && apt-get install -y \
+      libbz2-dev \
+      zlib1g-dev \
+      libpng-dev \
+      libxml2-dev \
+      libpq-dev \
+      libxslt-dev \
+      libzip-dev \
+      libonig-dev \
+      wget \
+      gnupg \
+      software-properties-common
+
+# Les extensions php
+RUN docker-php-ext-install pdo_pgsql gd mbstring exif zip bcmath
+
+# Installer Composer
+RUN curl -sS https://getcomposer.org/installer | php -- -install-dir=/usr/local/bin --filename=composer
+
+# Installer Node.js et Yarn.js
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install -y nodejs
+RUN npm install -g yarn@1
+
+# Commande par défaut pour lancer PHP-FPM
+CMD ["php-fpm"]

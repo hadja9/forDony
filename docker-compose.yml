@@ -1,0 +1,123 @@
+version: '3' 
+
+services: 
+
+  app-playground: 
+
+    build: 
+
+      context: . 
+
+      dockerfile: Dockerfile 
+
+    restart: always 
+    networks:
+      - mylocal-network
+    
+    
+
+  
+
+  nginx-playground: 
+
+    image: nginx:1.25.2-bookworm 
+
+    ports: 
+
+      - "8999:80" 
+
+
+    restart: always 
+    networks:
+      - mylocal-network
+
+    volumes:
+      - ./documents/projet1/:/usr/sbin/ginx
+
+  
+
+  database-playground: 
+
+    image: postgres:16-bullseye 
+
+
+    healthcheck: 
+
+      test: ["CMD-SHELL", "pg_isready -U laravel"] 
+
+      interval: 10s 
+
+      timeout: 5s 
+
+      retries: 3 
+
+    ports: 
+
+      - "5678:5432" 
+
+    restart: always 
+
+    environment: 
+
+      POSTGRES_USER: laravel 
+
+      POSTGRES_PASSWORD: laravel
+
+      POSTGRES_DB: laravel 
+
+      networks:
+      - mylocal-network
+
+  
+
+  redis-playground: 
+
+    image: redis:7-bullseye 
+
+    healthcheck: 
+
+      test: ["CMD", "redis-cli", "ping"] 
+
+      interval: 10s 
+
+      timeout: 5s 
+
+      retries: 3 
+
+    restart: always 
+    networks:
+      - mylocal-network
+
+  
+
+  storage-playground: 
+
+    image: minio/minio 
+
+    ports:
+      - "9090:90"
+
+    restart: always 
+    networks:
+      - mylocal-network
+
+
+  mail-playground: 
+
+    image: axllent/mailpit:v1.9 
+
+    ports: 
+
+      - "8225:8025" 
+
+      - "1225:1025" 
+
+networks:
+  mylocal-network:
+    driver: bridge
+
+volumes:
+ my-volume-app
+ my-volume-nginx
+
+ 
